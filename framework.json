@@ -1,0 +1,7 @@
+{
+  "name": "tapioca",
+  "type": "custom",
+  "version": "0.1.0",
+  "description": "Terminal rendering infrastructure — canvas, style, ANSI, input, unicode (shared)",
+  "dependencies": ["icetea"]
+}
