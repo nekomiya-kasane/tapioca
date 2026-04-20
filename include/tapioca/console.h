@@ -15,14 +15,14 @@
  *   con.newline();
  */
 
-#include <cstdint>
-#include <string>
-#include <string_view>
-
 #include "tapioca/ansi_emitter.h"
 #include "tapioca/exports.h"
 #include "tapioca/pal.h"
 #include "tapioca/terminal.h"
+
+#include <cstdint>
+#include <string>
+#include <string_view>
 
 namespace tapioca {
 
@@ -31,9 +31,9 @@ namespace tapioca {
  */
 struct console_config {
     output_sink sink;
-    color_depth depth       = color_depth::true_color;
-    bool        force_color = false;
-    bool        no_color    = false;
+    color_depth depth = color_depth::true_color;
+    bool force_color = false;
+    bool no_color = false;
 };
 
 /**
@@ -46,7 +46,7 @@ struct console_config {
  * rendering, and highlighter support.
  */
 class TAPIOCA_API basic_console {
-public:
+  public:
     /** @brief Construct with default stdout sink and auto-detected capabilities. */
     basic_console();
 
@@ -71,17 +71,17 @@ public:
      * Transitions the emitter to the target style, writes text,
      * then resets. Does not append a newline.
      */
-    void styled_write(const style& sty, std::string_view text);
+    void styled_write(const style &sty, std::string_view text);
 
     /**
      * @brief Emit a transition to the target style, write text (no reset).
      *
      * Useful for batching multiple styled writes before a final reset().
      */
-    void emit_styled(const style& sty, std::string_view text, std::string& buf);
+    void emit_styled(const style &sty, std::string_view text, std::string &buf);
 
     /** @brief Reset the ANSI emitter and write the reset sequence. */
-    void emit_reset(std::string& buf);
+    void emit_reset(std::string &buf);
 
     /** @brief Flush the accumulated buffer to the sink. */
     void flush_to_sink(std::string_view buf);
@@ -98,15 +98,15 @@ public:
     [[nodiscard]] uint32_t term_width() const noexcept;
 
     /** @brief Access the ANSI emitter (for subclasses). */
-    [[nodiscard]] ansi_emitter& emitter() noexcept { return emitter_; }
-    [[nodiscard]] const ansi_emitter& emitter() const noexcept { return emitter_; }
+    [[nodiscard]] ansi_emitter &emitter() noexcept { return emitter_; }
+    [[nodiscard]] const ansi_emitter &emitter() const noexcept { return emitter_; }
 
     /** @brief Access the configuration. */
-    [[nodiscard]] const console_config& config() const noexcept { return config_; }
+    [[nodiscard]] const console_config &config() const noexcept { return config_; }
 
-protected:
+  protected:
     console_config config_;
-    ansi_emitter   emitter_;
+    ansi_emitter emitter_;
 };
 
-}  // namespace tapioca
+} // namespace tapioca

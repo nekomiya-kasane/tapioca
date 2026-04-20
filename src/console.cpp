@@ -38,7 +38,7 @@ void basic_console::newline() {
 
 // ── Styled output ───────────────────────────────────────────────────────
 
-void basic_console::styled_write(const style& sty, std::string_view text) {
+void basic_console::styled_write(const style &sty, std::string_view text) {
     if (!color_enabled()) {
         config_.sink(text);
         return;
@@ -51,15 +51,14 @@ void basic_console::styled_write(const style& sty, std::string_view text) {
     config_.sink(buf);
 }
 
-void basic_console::emit_styled(const style& sty, std::string_view text,
-                                std::string& buf) {
+void basic_console::emit_styled(const style &sty, std::string_view text, std::string &buf) {
     if (color_enabled()) {
         emitter_.transition(sty, buf);
     }
     buf.append(text);
 }
 
-void basic_console::emit_reset(std::string& buf) {
+void basic_console::emit_reset(std::string &buf) {
     if (color_enabled()) {
         emitter_.reset(buf);
     }
@@ -72,7 +71,7 @@ void basic_console::flush_to_sink(std::string_view buf) {
 // ── State queries ───────────────────────────────────────────────────────
 
 bool basic_console::color_enabled() const noexcept {
-    if (config_.no_color)    return false;
+    if (config_.no_color) return false;
     if (config_.force_color) return true;
     return config_.depth != color_depth::none;
 }
@@ -82,4 +81,4 @@ uint32_t basic_console::term_width() const noexcept {
     return sz.width > 0 ? sz.width : 80;
 }
 
-}  // namespace tapioca
+} // namespace tapioca

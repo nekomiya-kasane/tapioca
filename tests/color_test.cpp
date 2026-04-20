@@ -1,17 +1,15 @@
-#include <gtest/gtest.h>
+#include "tapioca/color.h"
 
 #include <cmath>
 #include <cstdint>
-
-#include "tapioca/color.h"
+#include <gtest/gtest.h>
 
 using namespace tapioca;
 
 // ── Gradient ────────────────────────────────────────────────────────────
 
 TEST(Gradient, HorizontalLeftEdge) {
-    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(255, 255, 255),
-                      gradient_direction::horizontal};
+    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(255, 255, 255), gradient_direction::horizontal};
     rect area{0, 0, 100, 50};
     auto c = resolve_gradient(g, 0, 25, area);
     EXPECT_EQ(c.r, 0);
@@ -20,8 +18,7 @@ TEST(Gradient, HorizontalLeftEdge) {
 }
 
 TEST(Gradient, HorizontalRightEdge) {
-    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(255, 255, 255),
-                      gradient_direction::horizontal};
+    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(255, 255, 255), gradient_direction::horizontal};
     rect area{0, 0, 100, 50};
     auto c = resolve_gradient(g, 99, 25, area);
     EXPECT_EQ(c.r, 255);
@@ -30,9 +27,8 @@ TEST(Gradient, HorizontalRightEdge) {
 }
 
 TEST(Gradient, HorizontalMidpoint) {
-    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(254, 254, 254),
-                      gradient_direction::horizontal};
-    rect area{0, 0, 101, 50};  // span = 100, midpoint at x=50
+    linear_gradient g{color::from_rgb(0, 0, 0), color::from_rgb(254, 254, 254), gradient_direction::horizontal};
+    rect area{0, 0, 101, 50}; // span = 100, midpoint at x=50
     auto c = resolve_gradient(g, 50, 25, area);
     EXPECT_NEAR(c.r, 127, 1);
     EXPECT_NEAR(c.g, 127, 1);
@@ -40,16 +36,14 @@ TEST(Gradient, HorizontalMidpoint) {
 }
 
 TEST(Gradient, VerticalTopEdge) {
-    linear_gradient g{color::from_rgb(100, 0, 0), color::from_rgb(200, 0, 0),
-                      gradient_direction::vertical};
+    linear_gradient g{color::from_rgb(100, 0, 0), color::from_rgb(200, 0, 0), gradient_direction::vertical};
     rect area{0, 0, 50, 100};
     auto c = resolve_gradient(g, 25, 0, area);
     EXPECT_EQ(c.r, 100);
 }
 
 TEST(Gradient, VerticalBottomEdge) {
-    linear_gradient g{color::from_rgb(100, 0, 0), color::from_rgb(200, 0, 0),
-                      gradient_direction::vertical};
+    linear_gradient g{color::from_rgb(100, 0, 0), color::from_rgb(200, 0, 0), gradient_direction::vertical};
     rect area{0, 0, 50, 100};
     auto c = resolve_gradient(g, 25, 99, area);
     EXPECT_EQ(c.r, 200);
@@ -232,7 +226,7 @@ TEST(BlendOklch, NonRgbFallback) {
     auto a = color::from_index_16(1);
     auto b = color::from_rgb(0, 255, 0);
     auto c = blend_oklch(a, b, 0.5f);
-    EXPECT_EQ(c, a);  // non-RGB returns a
+    EXPECT_EQ(c, a); // non-RGB returns a
 }
 
 TEST(BlendOklch, SameColor) {

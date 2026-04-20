@@ -5,9 +5,9 @@
  * @brief Single character cell in the terminal grid.
  */
 
-#include <cstdint>
-
 #include "tapioca/style_table.h"
+
+#include <cstdint>
 
 namespace tapioca {
 
@@ -21,13 +21,13 @@ namespace tapioca {
  */
 struct cell {
     char32_t codepoint = U' ';
-    style_id sid       = default_style_id;
-    uint8_t  width     = 1;
-    uint8_t  alpha     = 255;  // 0 = fully transparent, 255 = fully opaque
+    style_id sid = default_style_id;
+    uint8_t width = 1;
+    uint8_t alpha = 255; // 0 = fully transparent, 255 = fully opaque
 
-    [[nodiscard]] constexpr bool operator==(const cell&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const cell &) const noexcept = default;
 };
 
 static_assert(sizeof(cell) == 8, "cell must be 8 bytes");
 
-}  // namespace tapioca
+} // namespace tapioca

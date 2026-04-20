@@ -7,8 +7,8 @@
 
 namespace tapioca {
 
-TAPIOCA_API const char* version() noexcept {
+TAPIOCA_API const char *version() noexcept {
     return "0.1.0";
 }
 
-}  // namespace tapioca
+} // namespace tapioca

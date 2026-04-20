@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
+#include "tapioca/style.h"
+#include "tapioca/style_table.h"
 
 #include <cstdint>
 #include <cstring>
-
-#include "tapioca/style.h"
-#include "tapioca/style_table.h"
+#include <gtest/gtest.h>
 
 using namespace tapioca;
 
@@ -148,15 +147,18 @@ TEST(StyleTable, InternDedup) {
     auto id1 = tbl.intern(s);
     auto id2 = tbl.intern(s);
     EXPECT_EQ(id1, id2);
-    EXPECT_EQ(tbl.size(), 2u);  // default + one interned
+    EXPECT_EQ(tbl.size(), 2u); // default + one interned
 }
 
 TEST(StyleTable, InternUnique) {
     style_table tbl;
 
-    style a; a.fg = color::from_rgb(255, 0, 0);
-    style b; b.fg = color::from_rgb(0, 255, 0);
-    style c; c.fg = color::from_rgb(0, 0, 255);
+    style a;
+    a.fg = color::from_rgb(255, 0, 0);
+    style b;
+    b.fg = color::from_rgb(0, 255, 0);
+    style c;
+    c.fg = color::from_rgb(0, 0, 255);
 
     auto ida = tbl.intern(a);
     auto idb = tbl.intern(b);
@@ -164,7 +166,7 @@ TEST(StyleTable, InternUnique) {
 
     EXPECT_NE(ida, idb);
     EXPECT_NE(idb, idc);
-    EXPECT_EQ(tbl.size(), 4u);  // default + 3
+    EXPECT_EQ(tbl.size(), 4u); // default + 3
 }
 
 TEST(StyleTable, Lookup) {
@@ -175,18 +177,19 @@ TEST(StyleTable, Lookup) {
     s.attrs = attr::italic;
 
     auto id = tbl.intern(s);
-    auto& recovered = tbl.lookup(id);
+    auto &recovered = tbl.lookup(id);
     EXPECT_EQ(recovered, s);
 }
 
 TEST(StyleTable, Clear) {
     style_table tbl;
-    style s; s.fg = color::from_rgb(1, 2, 3);
+    style s;
+    s.fg = color::from_rgb(1, 2, 3);
     tbl.intern(s);
     EXPECT_EQ(tbl.size(), 2u);
 
     tbl.clear();
-    EXPECT_EQ(tbl.size(), 1u);  // only default remains
+    EXPECT_EQ(tbl.size(), 1u); // only default remains
     EXPECT_TRUE(tbl.lookup(0).is_default());
 }
 

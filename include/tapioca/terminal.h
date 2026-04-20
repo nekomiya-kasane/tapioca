@@ -5,24 +5,24 @@
  * @brief Platform-abstracted terminal capability detection and control.
  */
 
-#include <cstdint>
-#include <cstdio>
-
 #include "tapioca/exports.h"
 #include "tapioca/style.h"
+
+#include <cstdint>
+#include <cstdio>
 
 namespace tapioca {
 
 /** @brief Terminal dimensions in character cells. */
 struct terminal_size {
-    uint32_t width  = 0;
+    uint32_t width = 0;
     uint32_t height = 0;
 };
 
 /** @brief Supported color depth levels. */
 enum class color_depth : uint8_t {
-    none       = 0,
-    basic_16   = 1,
+    none = 0,
+    basic_16 = 1,
     palette_256 = 2,
     true_color = 3,
 };
@@ -42,7 +42,7 @@ namespace terminal {
 [[nodiscard]] TAPIOCA_API color_depth detect_color_depth() noexcept;
 
 /** @brief Returns true if the given FILE* is connected to a terminal (TTY). */
-[[nodiscard]] TAPIOCA_API bool is_tty(FILE* f = stdout) noexcept;
+[[nodiscard]] TAPIOCA_API bool is_tty(FILE *f = stdout) noexcept;
 
 /** @brief Enable virtual terminal processing (Windows-specific, no-op on POSIX). */
 TAPIOCA_API bool enable_vt_processing() noexcept;
@@ -54,13 +54,13 @@ TAPIOCA_API void enable_utf8() noexcept;
  * @brief OSC sequence support flags detected from the terminal environment.
  */
 struct osc_support {
-    bool title       = false;
-    bool palette     = false;
-    bool cwd         = false;
-    bool hyperlink   = false;
-    bool notify      = false;
+    bool title = false;
+    bool palette = false;
+    bool cwd = false;
+    bool hyperlink = false;
+    bool notify = false;
     bool color_query = false;
-    bool clipboard   = false;
+    bool clipboard = false;
     bool shell_integration = false;
 };
 
@@ -69,7 +69,7 @@ struct osc_support {
  */
 [[nodiscard]] TAPIOCA_API osc_support detect_osc_support() noexcept;
 
-}  // namespace terminal
+} // namespace terminal
 
 // ── Terminal capability aggregate ────────────────────────────────────────
 
@@ -98,13 +98,13 @@ struct terminal_caps {
 
     /** @brief Per-feature OSC support flags. */
     terminal::osc_support osc{
-        /* title */             true,
-        /* palette */           true,
-        /* cwd */               true,
-        /* hyperlink */         true,
-        /* notify */            true,
-        /* color_query */       true,
-        /* clipboard */         true,
+        /* title */ true,
+        /* palette */ true,
+        /* cwd */ true,
+        /* hyperlink */ true,
+        /* notify */ true,
+        /* color_query */ true,
+        /* clipboard */ true,
         /* shell_integration */ true,
     };
 
@@ -133,11 +133,11 @@ struct terminal_caps {
      */
     static constexpr terminal_caps legacy_win_cmd() noexcept {
         terminal_caps c{};
-        c.max_colors      = color_depth::none;
+        c.max_colors = color_depth::none;
         c.supported_attrs = attr::none;
-        c.osc             = {};
-        c.vt_sequences    = false;
-        c.unicode         = false;
+        c.osc = {};
+        c.vt_sequences = false;
+        c.unicode = false;
         return c;
     }
 
@@ -148,11 +148,11 @@ struct terminal_caps {
      */
     static constexpr terminal_caps win_cmd_vt() noexcept {
         terminal_caps c{};
-        c.max_colors      = color_depth::basic_16;
+        c.max_colors = color_depth::basic_16;
         c.supported_attrs = attr::bold | attr::underline | attr::reverse;
-        c.osc             = {};
-        c.vt_sequences    = true;
-        c.unicode         = false;
+        c.osc = {};
+        c.vt_sequences = true;
+        c.unicode = false;
         return c;
     }
 
@@ -163,12 +163,11 @@ struct terminal_caps {
      */
     static constexpr terminal_caps basic_ansi() noexcept {
         terminal_caps c{};
-        c.max_colors      = color_depth::basic_16;
-        c.supported_attrs = attr::bold | attr::dim | attr::underline
-                          | attr::blink | attr::reverse | attr::hidden;
-        c.osc             = {/* title */ true};
-        c.vt_sequences    = true;
-        c.unicode         = false;
+        c.max_colors = color_depth::basic_16;
+        c.supported_attrs = attr::bold | attr::dim | attr::underline | attr::blink | attr::reverse | attr::hidden;
+        c.osc = {/* title */ true};
+        c.vt_sequences = true;
+        c.unicode = false;
         return c;
     }
 
@@ -177,13 +176,12 @@ struct terminal_caps {
      */
     static constexpr terminal_caps color_256() noexcept {
         terminal_caps c{};
-        c.max_colors      = color_depth::palette_256;
-        c.supported_attrs = attr::bold | attr::dim | attr::italic
-                          | attr::underline | attr::blink | attr::reverse
-                          | attr::hidden | attr::strike;
-        c.osc             = {/* title */ true, /* palette */ true};
-        c.vt_sequences    = true;
-        c.unicode         = true;
+        c.max_colors = color_depth::palette_256;
+        c.supported_attrs = attr::bold | attr::dim | attr::italic | attr::underline | attr::blink | attr::reverse |
+                            attr::hidden | attr::strike;
+        c.osc = {/* title */ true, /* palette */ true};
+        c.vt_sequences = true;
+        c.unicode = true;
         return c;
     }
 
@@ -198,4 +196,4 @@ struct terminal_caps {
     [[nodiscard]] static TAPIOCA_API terminal_caps detect() noexcept;
 };
 
-}  // namespace tapioca
+} // namespace tapioca

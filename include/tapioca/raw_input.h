@@ -5,12 +5,12 @@
  * @brief Cross-platform raw terminal input: RAII raw mode and event polling.
  */
 
+#include "tapioca/exports.h"
+#include "tapioca/input.h"
+
 #include <cstdint>
 #include <memory>
 #include <optional>
-
-#include "tapioca/exports.h"
-#include "tapioca/input.h"
 
 namespace tapioca {
 
@@ -24,16 +24,16 @@ namespace tapioca {
  * Only one instance should be active at a time.
  */
 class TAPIOCA_API raw_mode {
-public:
+  public:
     raw_mode();
     ~raw_mode();
 
-    raw_mode(const raw_mode&) = delete;
-    raw_mode& operator=(const raw_mode&) = delete;
-    raw_mode(raw_mode&&) noexcept;
-    raw_mode& operator=(raw_mode&&) noexcept;
+    raw_mode(const raw_mode &) = delete;
+    raw_mode &operator=(const raw_mode &) = delete;
+    raw_mode(raw_mode &&) noexcept;
+    raw_mode &operator=(raw_mode &&) noexcept;
 
-private:
+  private:
     struct impl;
     std::unique_ptr<impl> impl_;
 };
@@ -48,4 +48,4 @@ private:
  */
 [[nodiscard]] TAPIOCA_API std::optional<input_event> poll_event(int timeout_ms = 50);
 
-}  // namespace tapioca
+} // namespace tapioca

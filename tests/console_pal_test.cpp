@@ -1,11 +1,10 @@
-#include <gtest/gtest.h>
-
-#include <string>
-#include <string_view>
-
 #include "tapioca/console.h"
 #include "tapioca/pal.h"
 #include "tapioca/style.h"
+
+#include <gtest/gtest.h>
+#include <string>
+#include <string_view>
 
 using namespace tapioca;
 
@@ -216,7 +215,7 @@ TEST(BasicConsole, StyledWriteWithColorEnabled) {
     con.styled_write(sty, "red text");
     // Should contain ANSI escape codes + the text + reset
     EXPECT_NE(buf.find("red text"), std::string::npos);
-    EXPECT_NE(buf.find("\033["), std::string::npos);  // ANSI CSI
+    EXPECT_NE(buf.find("\033["), std::string::npos); // ANSI CSI
 }
 
 // ── basic_console: emit_styled / emit_reset / flush_to_sink ─────────────

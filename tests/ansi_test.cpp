@@ -1,9 +1,8 @@
-#include <gtest/gtest.h>
+#include "tapioca/ansi_emitter.h"
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <string>
-
-#include "tapioca/ansi_emitter.h"
 
 using namespace tapioca;
 
@@ -81,14 +80,14 @@ TEST(AnsiSgr, BgIndex256) {
 
 TEST(AnsiSgr, FgIndex16Low) {
     style st;
-    st.fg = color::from_index_16(3);  // yellow, SGR code 33
+    st.fg = color::from_index_16(3); // yellow, SGR code 33
     auto s = ansi::sgr(st);
     EXPECT_EQ(s, "\033[33m");
 }
 
 TEST(AnsiSgr, FgIndex16Bright) {
     style st;
-    st.fg = color::from_index_16(10);  // bright green, SGR code 92
+    st.fg = color::from_index_16(10); // bright green, SGR code 92
     auto s = ansi::sgr(st);
     EXPECT_EQ(s, "\033[92m");
 }

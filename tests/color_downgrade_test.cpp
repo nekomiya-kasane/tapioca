@@ -1,8 +1,7 @@
-#include <gtest/gtest.h>
+#include "tapioca/style.h"
 
 #include <cstdint>
-
-#include "tapioca/style.h"
+#include <gtest/gtest.h>
 
 using namespace tapioca;
 
@@ -21,13 +20,13 @@ TEST(ColorDowngrade, DefaultColorUnchanged) {
 
 TEST(ColorDowngrade, NoDowngradeNeeded16To16) {
     auto c = color::from_index_16(5);
-    auto d = c.downgrade(1);  // target=basic_16, current=indexed_16
+    auto d = c.downgrade(1); // target=basic_16, current=indexed_16
     EXPECT_EQ(d, c);
 }
 
 TEST(ColorDowngrade, NoDowngradeNeeded16ToHigher) {
     auto c = color::from_index_16(5);
-    auto d = c.downgrade(2);  // target=256, current=16 -- no downgrade
+    auto d = c.downgrade(2); // target=256, current=16 -- no downgrade
     EXPECT_EQ(d, c);
 }
 
@@ -39,7 +38,7 @@ TEST(ColorDowngrade, NoDowngradeNeeded256To256) {
 
 TEST(ColorDowngrade, NoDowngradeNeededRgbToTrueColor) {
     auto c = color::from_rgb(255, 128, 0);
-    auto d = c.downgrade(3);  // target=true_color
+    auto d = c.downgrade(3); // target=true_color
     EXPECT_EQ(d, c);
 }
 
@@ -156,7 +155,7 @@ TEST(ColorDowngrade, Index256BasicColorTo16) {
 
 TEST(ColorDowngrade, Index256CubeColorTo16) {
     // Cube color (index >= 16, < 232) should be converted to nearest 16-color
-    auto c = color::from_index_256(196);  // bright red in cube
+    auto c = color::from_index_256(196); // bright red in cube
     auto d = c.downgrade(1);
     EXPECT_EQ(d.kind, color_kind::indexed_16);
     EXPECT_LE(d.r, 15);

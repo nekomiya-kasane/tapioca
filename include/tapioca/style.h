@@ -5,10 +5,10 @@
  * @brief Color and Style types for terminal rendering.
  */
 
+#include "tapioca/exports.h"
+
 #include <cstdint>
 #include <functional>
-
-#include "tapioca/exports.h"
 
 namespace tapioca {
 
@@ -17,9 +17,9 @@ namespace tapioca {
 /** @brief Discriminator for color representation. */
 enum class color_kind : uint8_t {
     default_color = 0,
-    indexed_16    = 1,
-    indexed_256   = 2,
-    rgb           = 3,
+    indexed_16 = 1,
+    indexed_256 = 2,
+    rgb = 3,
 };
 
 /**
@@ -37,28 +37,22 @@ struct color {
     static constexpr color default_color() noexcept { return {}; }
 
     /** @brief Standard 16-color ANSI (0-15). */
-    static constexpr color from_index_16(uint8_t idx) noexcept {
-        return {color_kind::indexed_16, idx, 0, 0};
-    }
+    static constexpr color from_index_16(uint8_t idx) noexcept { return {color_kind::indexed_16, idx, 0, 0}; }
 
     /** @brief 256-color palette (0-255). */
-    static constexpr color from_index_256(uint8_t idx) noexcept {
-        return {color_kind::indexed_256, idx, 0, 0};
-    }
+    static constexpr color from_index_256(uint8_t idx) noexcept { return {color_kind::indexed_256, idx, 0, 0}; }
 
     /** @brief 24-bit true color. */
     static constexpr color from_rgb(uint8_t red, uint8_t green, uint8_t blue) noexcept {
         return {color_kind::rgb, red, green, blue};
     }
 
-    [[nodiscard]] constexpr bool is_default() const noexcept {
-        return kind == color_kind::default_color;
-    }
+    [[nodiscard]] constexpr bool is_default() const noexcept { return kind == color_kind::default_color; }
 
     /** @brief Downgrade this color to fit a target color depth. */
     [[nodiscard]] TAPIOCA_API color downgrade(uint8_t target_depth) const noexcept;
 
-    [[nodiscard]] constexpr bool operator==(const color&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const color &) const noexcept = default;
 };
 
 static_assert(sizeof(color) == 4, "color must be 4 bytes");
@@ -67,42 +61,42 @@ static_assert(sizeof(color) == 4, "color must be 4 bytes");
 
 namespace colors {
 
-inline constexpr color black          = color::from_index_16(0);
-inline constexpr color red            = color::from_index_16(1);
-inline constexpr color green          = color::from_index_16(2);
-inline constexpr color yellow         = color::from_index_16(3);
-inline constexpr color blue           = color::from_index_16(4);
-inline constexpr color magenta        = color::from_index_16(5);
-inline constexpr color cyan           = color::from_index_16(6);
-inline constexpr color white          = color::from_index_16(7);
-inline constexpr color bright_black   = color::from_index_16(8);
-inline constexpr color bright_red     = color::from_index_16(9);
-inline constexpr color bright_green   = color::from_index_16(10);
-inline constexpr color bright_yellow  = color::from_index_16(11);
-inline constexpr color bright_blue    = color::from_index_16(12);
+inline constexpr color black = color::from_index_16(0);
+inline constexpr color red = color::from_index_16(1);
+inline constexpr color green = color::from_index_16(2);
+inline constexpr color yellow = color::from_index_16(3);
+inline constexpr color blue = color::from_index_16(4);
+inline constexpr color magenta = color::from_index_16(5);
+inline constexpr color cyan = color::from_index_16(6);
+inline constexpr color white = color::from_index_16(7);
+inline constexpr color bright_black = color::from_index_16(8);
+inline constexpr color bright_red = color::from_index_16(9);
+inline constexpr color bright_green = color::from_index_16(10);
+inline constexpr color bright_yellow = color::from_index_16(11);
+inline constexpr color bright_blue = color::from_index_16(12);
 inline constexpr color bright_magenta = color::from_index_16(13);
-inline constexpr color bright_cyan    = color::from_index_16(14);
-inline constexpr color bright_white   = color::from_index_16(15);
+inline constexpr color bright_cyan = color::from_index_16(14);
+inline constexpr color bright_white = color::from_index_16(15);
 
-}  // namespace colors
+} // namespace colors
 
 // ── Text attributes ─────────────────────────────────────────────────────
 
 /** @brief Bitmask for text decoration attributes. */
 enum class attr : uint16_t {
-    none      = 0,
-    bold      = 1 << 0,
-    dim       = 1 << 1,
-    italic    = 1 << 2,
+    none = 0,
+    bold = 1 << 0,
+    dim = 1 << 1,
+    italic = 1 << 2,
     underline = 1 << 3,
-    blink     = 1 << 4,
-    reverse   = 1 << 5,
-    hidden    = 1 << 6,
-    strike           = 1 << 7,
+    blink = 1 << 4,
+    reverse = 1 << 5,
+    hidden = 1 << 6,
+    strike = 1 << 7,
     double_underline = 1 << 8,
-    overline         = 1 << 9,
-    superscript      = 1 << 10,
-    subscript        = 1 << 11,
+    overline = 1 << 9,
+    superscript = 1 << 10,
+    subscript = 1 << 11,
 };
 
 [[nodiscard]] constexpr attr operator|(attr a, attr b) noexcept {
@@ -117,12 +111,12 @@ enum class attr : uint16_t {
     return static_cast<attr>(~static_cast<uint16_t>(a));
 }
 
-constexpr attr& operator|=(attr& a, attr b) noexcept {
+constexpr attr &operator|=(attr &a, attr b) noexcept {
     a = a | b;
     return a;
 }
 
-constexpr attr& operator&=(attr& a, attr b) noexcept {
+constexpr attr &operator&=(attr &a, attr b) noexcept {
     a = a & b;
     return a;
 }
@@ -139,11 +133,11 @@ constexpr attr& operator&=(attr& a, attr b) noexcept {
  * 10 bytes total (4 + 4 + 2).
  */
 struct style {
-    color fg   = color::default_color();
-    color bg   = color::default_color();
-    attr  attrs = attr::none;
+    color fg = color::default_color();
+    color bg = color::default_color();
+    attr attrs = attr::none;
 
-    [[nodiscard]] constexpr bool operator==(const style&) const noexcept = default;
+    [[nodiscard]] constexpr bool operator==(const style &) const noexcept = default;
 
     /** @brief Returns true if this is a completely default/unstyled style. */
     [[nodiscard]] constexpr bool is_default() const noexcept {
@@ -153,22 +147,20 @@ struct style {
 
 static_assert(sizeof(style) == 10, "style must be 10 bytes");
 
-}  // namespace tapioca
+} // namespace tapioca
 
 // ── std::hash specializations ───────────────────────────────────────────
 
-template <>
-struct std::hash<tapioca::color> {
-    [[nodiscard]] size_t operator()(const tapioca::color& c) const noexcept {
+template <> struct std::hash<tapioca::color> {
+    [[nodiscard]] size_t operator()(const tapioca::color &c) const noexcept {
         uint32_t v;
         std::memcpy(&v, &c, sizeof(v));
         return std::hash<uint32_t>{}(v);
     }
 };
 
-template <>
-struct std::hash<tapioca::style> {
-    [[nodiscard]] size_t operator()(const tapioca::style& s) const noexcept {
+template <> struct std::hash<tapioca::style> {
+    [[nodiscard]] size_t operator()(const tapioca::style &s) const noexcept {
         auto h1 = std::hash<tapioca::color>{}(s.fg);
         auto h2 = std::hash<tapioca::color>{}(s.bg);
         auto h3 = std::hash<uint16_t>{}(static_cast<uint16_t>(s.attrs));

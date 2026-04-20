@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
+#include "tapioca/image.h"
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <string>
 #include <vector>
-
-#include "tapioca/image.h"
 
 using namespace tapioca;
 
@@ -113,11 +112,7 @@ TEST(EncodeIterm2, ValidPixels) {
 
 TEST(EncodeIterm2, WithCellDimensions) {
     std::vector<uint8_t> pixels(4 * 4 * 4, 0xFF);
-    image_encode_options opts{
-        .width = 4, .height = 4,
-        .cell_width = 10, .cell_height = 5,
-        .preserve_aspect = false
-    };
+    image_encode_options opts{.width = 4, .height = 4, .cell_width = 10, .cell_height = 5, .preserve_aspect = false};
     auto result = encode_iterm2(pixels.data(), opts);
     EXPECT_FALSE(result.empty());
     EXPECT_NE(result.find("width=10"), std::string::npos);

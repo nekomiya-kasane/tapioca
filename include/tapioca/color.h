@@ -12,11 +12,11 @@
  * - Perceptual color blending (OKLCH-based)
  */
 
+#include "tapioca/layout_types.h"
+#include "tapioca/style.h"
+
 #include <cmath>
 #include <cstdint>
-
-#include "tapioca/style.h"
-#include "tapioca/layout_types.h"
 
 namespace tapioca {
 
@@ -24,8 +24,8 @@ namespace tapioca {
 
 /** @brief Direction of a linear gradient. */
 enum class gradient_direction : uint8_t {
-    horizontal,  // left -> right
-    vertical,    // top -> bottom
+    horizontal, // left -> right
+    vertical,   // top -> bottom
 };
 
 /**
@@ -42,7 +42,7 @@ struct linear_gradient {
  *
  * Returns the interpolated RGB color. Non-RGB start/end colors are returned as-is (start).
  */
-inline color resolve_gradient(const linear_gradient& g, uint32_t x, uint32_t y, rect area) {
+inline color resolve_gradient(const linear_gradient &g, uint32_t x, uint32_t y, rect area) {
     if (area.w == 0 && area.h == 0) return g.start;
     if (g.start.kind != color_kind::rgb || g.end.kind != color_kind::rgb) return g.start;
 
@@ -60,20 +60,18 @@ inline color resolve_gradient(const linear_gradient& g, uint32_t x, uint32_t y, 
     if (t < 0.0f) t = 0.0f;
     if (t > 1.0f) t = 1.0f;
 
-    return color::from_rgb(
-        static_cast<uint8_t>(g.start.r + (g.end.r - g.start.r) * t),
-        static_cast<uint8_t>(g.start.g + (g.end.g - g.start.g) * t),
-        static_cast<uint8_t>(g.start.b + (g.end.b - g.start.b) * t)
-    );
+    return color::from_rgb(static_cast<uint8_t>(g.start.r + (g.end.r - g.start.r) * t),
+                           static_cast<uint8_t>(g.start.g + (g.end.g - g.start.g) * t),
+                           static_cast<uint8_t>(g.start.b + (g.end.b - g.start.b) * t));
 }
 
 // ── HSL ─────────────────────────────────────────────────────────────────
 
 /** @brief HSL color representation (all components in [0, 1]). */
 struct hsl {
-    float h = 0.0f;  // hue        [0, 1) maps to [0, 360)
-    float s = 0.0f;  // saturation [0, 1]
-    float l = 0.0f;  // lightness  [0, 1]
+    float h = 0.0f; // hue        [0, 1) maps to [0, 360)
+    float s = 0.0f; // saturation [0, 1]
+    float l = 0.0f; // lightness  [0, 1]
 };
 
 /** @brief Convert sRGB [0,255] to HSL. */
@@ -87,9 +85,12 @@ struct hsl {
 
     float s = (l > 0.5f) ? d / (2.0f - mx - mn) : d / (mx + mn);
     float h = 0.0f;
-    if (mx == r)      h = (g - b) / d + (g < b ? 6.0f : 0.0f);
-    else if (mx == g) h = (b - r) / d + 2.0f;
-    else              h = (r - g) / d + 4.0f;
+    if (mx == r)
+        h = (g - b) / d + (g < b ? 6.0f : 0.0f);
+    else if (mx == g)
+        h = (b - r) / d + 2.0f;
+    else
+        h = (r - g) / d + 4.0f;
     h /= 6.0f;
     return {h, s, l};
 }
@@ -110,20 +111,18 @@ struct hsl {
     }
     float q = (c.l < 0.5f) ? c.l * (1.0f + c.s) : c.l + c.s - c.l * c.s;
     float p = 2.0f * c.l - q;
-    return color::from_rgb(
-        static_cast<uint8_t>(hue2rgb(p, q, c.h + 1.0f / 3.0f) * 255.0f + 0.5f),
-        static_cast<uint8_t>(hue2rgb(p, q, c.h)                * 255.0f + 0.5f),
-        static_cast<uint8_t>(hue2rgb(p, q, c.h - 1.0f / 3.0f) * 255.0f + 0.5f)
-    );
+    return color::from_rgb(static_cast<uint8_t>(hue2rgb(p, q, c.h + 1.0f / 3.0f) * 255.0f + 0.5f),
+                           static_cast<uint8_t>(hue2rgb(p, q, c.h) * 255.0f + 0.5f),
+                           static_cast<uint8_t>(hue2rgb(p, q, c.h - 1.0f / 3.0f) * 255.0f + 0.5f));
 }
 
 // ── OKLCH ───────────────────────────────────────────────────────────────
 
 /** @brief OKLCH color representation (perceptually uniform). */
 struct oklch {
-    float L  = 0.0f;  // lightness [0, 1]
-    float C  = 0.0f;  // chroma    [0, ~0.4]
-    float h  = 0.0f;  // hue       [0, 360) degrees
+    float L = 0.0f; // lightness [0, 1]
+    float C = 0.0f; // chroma    [0, ~0.4]
+    float h = 0.0f; // hue       [0, 360) degrees
 };
 
 namespace detail {
@@ -140,7 +139,7 @@ namespace detail {
     return (c <= 0.0031308f) ? c * 12.92f : 1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f;
 }
 
-}  // namespace detail
+} // namespace detail
 
 /** @brief Convert sRGB [0,255] to OKLCH. */
 [[nodiscard]] inline oklch rgb_to_oklch(uint8_t r8, uint8_t g8, uint8_t b8) noexcept {
@@ -154,16 +153,18 @@ namespace detail {
     float s = 0.0883024619f * r + 0.2817188376f * g + 0.6299787005f * b;
 
     // Cube root
-    l = std::cbrt(l); m = std::cbrt(m); s = std::cbrt(s);
+    l = std::cbrt(l);
+    m = std::cbrt(m);
+    s = std::cbrt(s);
 
     // LMS -> OKLab
-    float L  = 0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s;
+    float L = 0.2104542553f * l + 0.7936177850f * m - 0.0040720468f * s;
     float a_ = 1.9779984951f * l - 2.4285922050f * m + 0.4505937099f * s;
     float b_ = 0.0259040371f * l + 0.7827717662f * m - 0.8086757660f * s;
 
     // OKLab -> OKLCH
-    float C  = std::sqrt(a_ * a_ + b_ * b_);
-    float h  = std::atan2(b_, a_) * (180.0f / 3.14159265358979f);
+    float C = std::sqrt(a_ * a_ + b_ * b_);
+    float h = std::atan2(b_, a_) * (180.0f / 3.14159265358979f);
     if (h < 0.0f) h += 360.0f;
 
     return {L, C, h};
@@ -181,17 +182,17 @@ namespace detail {
     float s = c.L - 0.0894841775f * a_ - 1.2914855480f * b_;
 
     // Cube
-    l = l * l * l; m = m * m * m; s = s * s * s;
+    l = l * l * l;
+    m = m * m * m;
+    s = s * s * s;
 
     // LMS -> linear RGB
-    float r =  4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s;
+    float r = 4.0767416621f * l - 3.3077115913f * m + 0.2309699292f * s;
     float g = -1.2684380046f * l + 2.6097574011f * m - 0.3413193965f * s;
     float b = -0.0041960863f * l - 0.7034186147f * m + 1.7076147010f * s;
 
     // Clamp & gamma encode
-    auto to_u8 = [](float v) -> uint8_t {
-        return static_cast<uint8_t>(detail::linear_to_srgb(v) * 255.0f + 0.5f);
-    };
+    auto to_u8 = [](float v) -> uint8_t { return static_cast<uint8_t>(detail::linear_to_srgb(v) * 255.0f + 0.5f); };
     return color::from_rgb(to_u8(r), to_u8(g), to_u8(b));
 }
 
@@ -220,7 +221,11 @@ namespace detail {
 [[nodiscard]] inline float contrast_ratio(color a, color b) noexcept {
     float la = relative_luminance(a);
     float lb = relative_luminance(b);
-    if (la < lb) { float tmp = la; la = lb; lb = tmp; }
+    if (la < lb) {
+        float tmp = la;
+        la = lb;
+        lb = tmp;
+    }
     return (la + 0.05f) / (lb + 0.05f);
 }
 
@@ -248,13 +253,13 @@ namespace detail {
 
     // Interpolate hue via shortest arc
     float dh = cb.h - ca.h;
-    if (dh > 180.0f)  dh -= 360.0f;
+    if (dh > 180.0f) dh -= 360.0f;
     if (dh < -180.0f) dh += 360.0f;
     float h = ca.h + dh * t;
-    if (h < 0.0f)   h += 360.0f;
+    if (h < 0.0f) h += 360.0f;
     if (h >= 360.0f) h -= 360.0f;
 
     return oklch_to_rgb({L, C, h});
 }
 
-}  // namespace tapioca
+} // namespace tapioca

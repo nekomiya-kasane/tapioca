@@ -8,10 +8,10 @@
  * Handles combining characters (width 0), narrow (width 1), and wide/fullwidth (width 2).
  */
 
+#include "tapioca/exports.h"
+
 #include <cstdint>
 #include <string_view>
-
-#include "tapioca/exports.h"
 
 namespace tapioca {
 
@@ -39,6 +39,6 @@ namespace tapioca {
  * @param[out] cp  decoded codepoint (U+FFFD on error)
  * @return number of bytes consumed (1-4), or 1 on error (advances past bad byte)
  */
-[[nodiscard]] TAPIOCA_API int utf8_decode(const char* data, size_t len, char32_t& cp) noexcept;
+[[nodiscard]] TAPIOCA_API int utf8_decode(const char *data, size_t len, char32_t &cp) noexcept;
 
-}  // namespace tapioca
+} // namespace tapioca

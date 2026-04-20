@@ -1,9 +1,8 @@
-#include <gtest/gtest.h>
+#include "tapioca/canvas.h"
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <vector>
-
-#include "tapioca/canvas.h"
 
 using namespace tapioca;
 
@@ -25,7 +24,7 @@ TEST(Canvas, ConstructWithSize) {
 
 TEST(Canvas, DefaultCellIsSpace) {
     canvas c(10, 10);
-    auto& cl = c.get(0, 0);
+    auto &cl = c.get(0, 0);
     EXPECT_EQ(cl.codepoint, U' ');
     EXPECT_EQ(cl.sid, default_style_id);
     EXPECT_EQ(cl.width, 1);
@@ -38,14 +37,14 @@ TEST(Canvas, SetAndGet) {
     canvas c(10, 10);
     cell ch{U'A', 0, 1, 255};
     c.set(5, 3, ch);
-    auto& result = c.get(5, 3);
+    auto &result = c.get(5, 3);
     EXPECT_EQ(result.codepoint, U'A');
 }
 
 TEST(Canvas, SetTransparentSkipped) {
     canvas c(10, 10);
     cell original = c.get(5, 3);
-    cell transparent{U'X', 0, 1, 0};  // alpha=0 -> transparent
+    cell transparent{U'X', 0, 1, 0}; // alpha=0 -> transparent
     c.set(5, 3, transparent);
     // Should be unchanged since alpha=0 is skipped
     EXPECT_EQ(c.get(5, 3), original);
@@ -54,7 +53,7 @@ TEST(Canvas, SetTransparentSkipped) {
 TEST(Canvas, GetCurrent) {
     canvas c(10, 10);
     // Initially current buffer is all default cells
-    auto& cl = c.get_current(0, 0);
+    auto &cl = c.get_current(0, 0);
     EXPECT_EQ(cl.codepoint, U' ');
 }
 
@@ -78,9 +77,7 @@ TEST(Canvas, DiffCallback) {
     c.set(2, 3, {U'X', 0, 1, 255});
 
     std::vector<std::pair<uint32_t, uint32_t>> changed;
-    c.diff([&](uint32_t x, uint32_t y, const cell&) {
-        changed.emplace_back(x, y);
-    });
+    c.diff([&](uint32_t x, uint32_t y, const cell &) { changed.emplace_back(x, y); });
 
     ASSERT_EQ(changed.size(), 1u);
     EXPECT_EQ(changed[0].first, 2u);
@@ -105,7 +102,7 @@ TEST(Canvas, SwapThenDiffIsZero) {
     // After swap, next still has the old next buffer (now current's old), but next wasn't cleared
     // Both buffers should have Z at (0,0) since swap just swaps pointers
     // The next buffer is now the old current, which was default
-    EXPECT_EQ(c.diff_count(), 1u);  // Z is in current but not in next (which is old current)
+    EXPECT_EQ(c.diff_count(), 1u); // Z is in current but not in next (which is old current)
 }
 
 // ── Clear ───────────────────────────────────────────────────────────────
@@ -136,7 +133,7 @@ TEST(Canvas, Resize) {
 TEST(Canvas, CopyCurrentToNext) {
     canvas c(10, 10);
     c.set(5, 5, {U'Q', 0, 1, 255});
-    c.swap();  // now current has Q at (5,5), next has old current (default)
+    c.swap(); // now current has Q at (5,5), next has old current (default)
 
     c.copy_current_to_next();
     // Now next should match current
@@ -148,7 +145,7 @@ TEST(Canvas, CopyCurrentToNext) {
 
 TEST(Canvas, InvalidateForcesFullRedraw) {
     canvas c(10, 10);
-    c.swap();  // both buffers are default
+    c.swap(); // both buffers are default
     EXPECT_EQ(c.diff_count(), 0u);
 
     c.invalidate_current();

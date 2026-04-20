@@ -1,9 +1,8 @@
-#include <gtest/gtest.h>
+#include "tapioca/layout_types.h"
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <limits>
-
-#include "tapioca/layout_types.h"
 
 using namespace tapioca;
 
@@ -44,10 +43,10 @@ TEST(Rect, Equality) {
 TEST(Rect, InsetBasic) {
     rect r{10, 20, 100, 80};
     auto inset = r.inset(5, 10, 5, 10);
-    EXPECT_EQ(inset.x, 20u);   // x + left
-    EXPECT_EQ(inset.y, 25u);   // y + top
-    EXPECT_EQ(inset.w, 80u);   // w - left - right
-    EXPECT_EQ(inset.h, 70u);   // h - top - bottom
+    EXPECT_EQ(inset.x, 20u); // x + left
+    EXPECT_EQ(inset.y, 25u); // y + top
+    EXPECT_EQ(inset.w, 80u); // w - left - right
+    EXPECT_EQ(inset.h, 70u); // h - top - bottom
 }
 
 TEST(Rect, InsetClampToZero) {
@@ -109,7 +108,7 @@ TEST(BoxConstraints, ConstrainWithin) {
 
 TEST(BoxConstraints, ConstrainClampUp) {
     box_constraints bc{20, 100, 10, 50};
-    measurement m{5, 5};  // below minimum
+    measurement m{5, 5}; // below minimum
     auto result = bc.constrain(m);
     EXPECT_EQ(result.width, 20u);
     EXPECT_EQ(result.height, 10u);
@@ -117,7 +116,7 @@ TEST(BoxConstraints, ConstrainClampUp) {
 
 TEST(BoxConstraints, ConstrainClampDown) {
     box_constraints bc{0, 50, 0, 30};
-    measurement m{100, 100};  // above maximum
+    measurement m{100, 100}; // above maximum
     auto result = bc.constrain(m);
     EXPECT_EQ(result.width, 50u);
     EXPECT_EQ(result.height, 30u);

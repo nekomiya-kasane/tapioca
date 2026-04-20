@@ -13,38 +13,38 @@
  * via a pal::output_sink. The caller provides raw pixel data (RGBA).
  */
 
+#include "tapioca/exports.h"
+
 #include <cstdint>
 #include <string>
 #include <string_view>
-
-#include "tapioca/exports.h"
 
 namespace tapioca {
 
 /** @brief Supported terminal image protocols. */
 enum class image_protocol : uint8_t {
-    none   = 0,
-    sixel  = 1,
-    kitty  = 2,
+    none = 0,
+    sixel = 1,
+    kitty = 2,
     iterm2 = 3,
 };
 
 /** @brief Pixel format for image data. */
 enum class pixel_format : uint8_t {
-    rgba8 = 0,  // 4 bytes per pixel: R, G, B, A
-    rgb8  = 1,  // 3 bytes per pixel: R, G, B
+    rgba8 = 0, // 4 bytes per pixel: R, G, B, A
+    rgb8 = 1,  // 3 bytes per pixel: R, G, B
 };
 
 /**
  * @brief Options for image encoding.
  */
 struct image_encode_options {
-    uint32_t     width       = 0;      // image width in pixels
-    uint32_t     height      = 0;      // image height in pixels
-    pixel_format format      = pixel_format::rgba8;
-    uint32_t     cell_width  = 0;      // desired width in terminal cells (0 = auto)
-    uint32_t     cell_height = 0;      // desired height in terminal cells (0 = auto)
-    bool         preserve_aspect = true;
+    uint32_t width = 0;  // image width in pixels
+    uint32_t height = 0; // image height in pixels
+    pixel_format format = pixel_format::rgba8;
+    uint32_t cell_width = 0;  // desired width in terminal cells (0 = auto)
+    uint32_t cell_height = 0; // desired height in terminal cells (0 = auto)
+    bool preserve_aspect = true;
 };
 
 // ── Sixel ───────────────────────────────────────────────────────────────
@@ -59,8 +59,7 @@ struct image_encode_options {
  * @param opts    Encoding options (width, height, format).
  * @return Sixel escape sequence string ready to write to the terminal.
  */
-[[nodiscard]] TAPIOCA_API std::string encode_sixel(
-    const uint8_t* pixels, const image_encode_options& opts);
+[[nodiscard]] TAPIOCA_API std::string encode_sixel(const uint8_t *pixels, const image_encode_options &opts);
 
 // ── Kitty graphics protocol ─────────────────────────────────────────────
 
@@ -74,8 +73,7 @@ struct image_encode_options {
  * @param opts    Encoding options (width, height, format).
  * @return Kitty APC escape sequence(s) ready to write to the terminal.
  */
-[[nodiscard]] TAPIOCA_API std::string encode_kitty(
-    const uint8_t* pixels, const image_encode_options& opts);
+[[nodiscard]] TAPIOCA_API std::string encode_kitty(const uint8_t *pixels, const image_encode_options &opts);
 
 // ── iTerm2 inline images ────────────────────────────────────────────────
 
@@ -89,8 +87,7 @@ struct image_encode_options {
  * @param opts    Encoding options (width, height, format).
  * @return OSC 1337 escape sequence string ready to write to the terminal.
  */
-[[nodiscard]] TAPIOCA_API std::string encode_iterm2(
-    const uint8_t* pixels, const image_encode_options& opts);
+[[nodiscard]] TAPIOCA_API std::string encode_iterm2(const uint8_t *pixels, const image_encode_options &opts);
 
 // ── Protocol detection ──────────────────────────────────────────────────
 
@@ -109,7 +106,7 @@ struct image_encode_options {
  * Convenience function that dispatches to the appropriate encoder.
  * Returns an empty string for image_protocol::none.
  */
-[[nodiscard]] TAPIOCA_API std::string encode_image(
-    image_protocol proto, const uint8_t* pixels, const image_encode_options& opts);
+[[nodiscard]] TAPIOCA_API std::string encode_image(image_protocol proto, const uint8_t *pixels,
+                                                   const image_encode_options &opts);
 
-}  // namespace tapioca
+} // namespace tapioca

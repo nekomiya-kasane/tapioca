@@ -10,23 +10,23 @@
 #include <string_view>
 
 #ifdef __EMSCRIPTEN__
-#    include <emscripten.h>
+#include <emscripten.h>
 #endif
 
 namespace tapioca::pal {
 
-    // ── stdout_sink ──────────────────────────────────────────────────────────
+// ── stdout_sink ──────────────────────────────────────────────────────────
 
 #ifdef __EMSCRIPTEN__
 
-    // Emscripten ANSI→HTML stdout sink.
-    // Uses EM_JS to embed a JS ANSI parser. Key constraints inside EM_JS body:
-    //   - EM_JS stringifies via C preprocessor #code, collapsing \\\\ → \\.
-    //     So "\\\\[" in source becomes "\\[" in JS — still one escape layer short.
-    //     Solution: build all special chars via String.fromCharCode() to avoid
-    //     any escape-level ambiguity.
-    //   - Must handle both browser (DOM output) and Node.js (raw ANSI passthrough).
-    // clang-format off
+// Emscripten ANSI→HTML stdout sink.
+// Uses EM_JS to embed a JS ANSI parser. Key constraints inside EM_JS body:
+//   - EM_JS stringifies via C preprocessor #code, collapsing \\\\ → \\.
+//     So "\\\\[" in source becomes "\\[" in JS — still one escape layer short.
+//     Solution: build all special chars via String.fromCharCode() to avoid
+//     any escape-level ambiguity.
+//   - Must handle both browser (DOM output) and Node.js (raw ANSI passthrough).
+// clang-format off
 EM_JS(void, tapioca_ansi_write_impl, (const char* ptr, int len), {
     var text = UTF8ToString(ptr, len);
     // Node.js: pass ANSI codes through directly — terminal handles them natively
@@ -158,77 +158,77 @@ EM_JS(void, tapioca_ansi_write_impl, (const char* ptr, int len), {
     Module._ansiBold = bold; Module._ansiDim = dim; Module._ansiItalic = italic;
     Module._ansiUnderline = ul; Module._ansiStrike = strike; Module._ansiOverline = ol;
 });
-    // clang-format on
+// clang-format on
 
-    output_sink stdout_sink() noexcept {
-        return [](std::string_view data) { tapioca_ansi_write_impl(data.data(), static_cast<int>(data.size())); };
+output_sink stdout_sink() noexcept {
+    return [](std::string_view data) { tapioca_ansi_write_impl(data.data(), static_cast<int>(data.size())); };
+}
+
+#else // native
+
+output_sink stdout_sink() noexcept {
+    return [](std::string_view data) { std::fwrite(data.data(), 1, data.size(), stdout); };
+}
+
+#endif // __EMSCRIPTEN__
+
+namespace {
+
+// Base64 encoding table
+constexpr char b64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+
+std::string base64_encode(std::string_view input) {
+    std::string out;
+    out.reserve(((input.size() + 2) / 3) * 4);
+
+    size_t i = 0;
+    while (i + 2 < input.size()) {
+        uint32_t triple = (static_cast<uint8_t>(input[i]) << 16) | (static_cast<uint8_t>(input[i + 1]) << 8) |
+                          static_cast<uint8_t>(input[i + 2]);
+        out += b64_table[(triple >> 18) & 0x3F];
+        out += b64_table[(triple >> 12) & 0x3F];
+        out += b64_table[(triple >> 6) & 0x3F];
+        out += b64_table[triple & 0x3F];
+        i += 3;
     }
 
-#else  // native
-
-    output_sink stdout_sink() noexcept {
-        return [](std::string_view data) { std::fwrite(data.data(), 1, data.size(), stdout); };
+    if (i + 1 == input.size()) {
+        uint32_t val = static_cast<uint8_t>(input[i]) << 16;
+        out += b64_table[(val >> 18) & 0x3F];
+        out += b64_table[(val >> 12) & 0x3F];
+        out += '=';
+        out += '=';
+    } else if (i + 2 == input.size()) {
+        uint32_t val = (static_cast<uint8_t>(input[i]) << 16) | (static_cast<uint8_t>(input[i + 1]) << 8);
+        out += b64_table[(val >> 18) & 0x3F];
+        out += b64_table[(val >> 12) & 0x3F];
+        out += b64_table[(val >> 6) & 0x3F];
+        out += '=';
     }
 
-#endif  // __EMSCRIPTEN__
+    return out;
+}
 
-    namespace {
+} // anonymous namespace
 
-        // Base64 encoding table
-        constexpr char b64_table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-
-        std::string base64_encode(std::string_view input) {
-            std::string out;
-            out.reserve(((input.size() + 2) / 3) * 4);
-
-            size_t i = 0;
-            while (i + 2 < input.size()) {
-                uint32_t triple = (static_cast<uint8_t>(input[i]) << 16) | (static_cast<uint8_t>(input[i + 1]) << 8)
-                                  | static_cast<uint8_t>(input[i + 2]);
-                out += b64_table[(triple >> 18) & 0x3F];
-                out += b64_table[(triple >> 12) & 0x3F];
-                out += b64_table[(triple >> 6) & 0x3F];
-                out += b64_table[triple & 0x3F];
-                i += 3;
-            }
-
-            if (i + 1 == input.size()) {
-                uint32_t val = static_cast<uint8_t>(input[i]) << 16;
-                out += b64_table[(val >> 18) & 0x3F];
-                out += b64_table[(val >> 12) & 0x3F];
-                out += '=';
-                out += '=';
-            } else if (i + 2 == input.size()) {
-                uint32_t val = (static_cast<uint8_t>(input[i]) << 16) | (static_cast<uint8_t>(input[i + 1]) << 8);
-                out += b64_table[(val >> 18) & 0x3F];
-                out += b64_table[(val >> 12) & 0x3F];
-                out += b64_table[(val >> 6) & 0x3F];
-                out += '=';
-            }
-
-            return out;
-        }
-
-    }  // anonymous namespace
-
-    void clipboard_set(std::string_view data, const output_sink& sink) {
-        if (data.empty() || !sink) {
-            return;
-        }
-
-        std::string seq;
-        seq.reserve(data.size() * 2 + 16);
-        seq += "\033]52;c;";
-        seq += base64_encode(data);
-        seq += "\033\\";
-        sink(seq);
+void clipboard_set(std::string_view data, const output_sink &sink) {
+    if (data.empty() || !sink) {
+        return;
     }
 
-    void clipboard_request(const output_sink& sink) {
-        if (!sink) {
-            return;
-        }
-        sink(std::string_view{"\033]52;c;?\033\\"});
-    }
+    std::string seq;
+    seq.reserve(data.size() * 2 + 16);
+    seq += "\033]52;c;";
+    seq += base64_encode(data);
+    seq += "\033\\";
+    sink(seq);
+}
 
-}  // namespace tapioca::pal
+void clipboard_request(const output_sink &sink) {
+    if (!sink) {
+        return;
+    }
+    sink(std::string_view{"\033]52;c;?\033\\"});
+}
+
+} // namespace tapioca::pal

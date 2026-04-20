@@ -52,7 +52,7 @@ color_depth detect_color_depth() noexcept {
 
 // ── is_tty ──────────────────────────────────────────────────────────────
 
-bool is_tty(FILE*) noexcept {
+bool is_tty(FILE *) noexcept {
     // In the browser, we always render to a DOM element — treat as TTY
     return true;
 }
@@ -77,7 +77,7 @@ osc_support detect_osc_support() noexcept {
     return {};
 }
 
-}  // namespace tapioca::terminal
+} // namespace tapioca::terminal
 
 // ── terminal_caps::detect (Emscripten) ──────────────────────────────────
 
@@ -85,14 +85,14 @@ namespace tapioca {
 
 terminal_caps terminal_caps::detect() noexcept {
     terminal_caps caps{};
-    caps.max_colors      = color_depth::true_color;
+    caps.max_colors = color_depth::true_color;
     caps.supported_attrs = static_cast<attr>(0x0FFF);
-    caps.osc             = {};  // no real OSC in browser
-    caps.vt_sequences    = true;
-    caps.unicode         = true;
+    caps.osc = {}; // no real OSC in browser
+    caps.vt_sequences = true;
+    caps.unicode = true;
     return caps;
 }
 
-}  // namespace tapioca
+} // namespace tapioca
 
-#endif  // __EMSCRIPTEN__
+#endif // __EMSCRIPTEN__

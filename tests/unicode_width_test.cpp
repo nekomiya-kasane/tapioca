@@ -1,10 +1,9 @@
-#include <gtest/gtest.h>
+#include "tapioca/unicode_width.h"
 
 #include <cstdint>
+#include <gtest/gtest.h>
 #include <string>
 #include <string_view>
-
-#include "tapioca/unicode_width.h"
 
 using namespace tapioca;
 
@@ -32,15 +31,15 @@ TEST(CharWidth, Newline) {
 
 TEST(CharWidth, C0ControlChars) {
     // C0 control characters (except HT=0x09, LF=0x0A) return -1
-    EXPECT_EQ(char_width(U'\x00'), -1);  // NUL
-    EXPECT_EQ(char_width(U'\x01'), -1);  // SOH
-    EXPECT_EQ(char_width(U'\x07'), -1);  // BEL
-    EXPECT_EQ(char_width(U'\x08'), -1);  // BS
-    EXPECT_EQ(char_width(U'\x0B'), -1);  // VT
-    EXPECT_EQ(char_width(U'\x0C'), -1);  // FF
-    EXPECT_EQ(char_width(U'\x0D'), -1);  // CR
-    EXPECT_EQ(char_width(U'\x1B'), -1);  // ESC
-    EXPECT_EQ(char_width(U'\x1F'), -1);  // US
+    EXPECT_EQ(char_width(U'\x00'), -1); // NUL
+    EXPECT_EQ(char_width(U'\x01'), -1); // SOH
+    EXPECT_EQ(char_width(U'\x07'), -1); // BEL
+    EXPECT_EQ(char_width(U'\x08'), -1); // BS
+    EXPECT_EQ(char_width(U'\x0B'), -1); // VT
+    EXPECT_EQ(char_width(U'\x0C'), -1); // FF
+    EXPECT_EQ(char_width(U'\x0D'), -1); // CR
+    EXPECT_EQ(char_width(U'\x1B'), -1); // ESC
+    EXPECT_EQ(char_width(U'\x1F'), -1); // US
 }
 
 TEST(CharWidth, DEL) {
@@ -50,7 +49,7 @@ TEST(CharWidth, DEL) {
 TEST(CharWidth, C1ControlChars) {
     // C1 control characters (0x80..0x9F) return -1
     EXPECT_EQ(char_width(U'\x80'), -1);
-    EXPECT_EQ(char_width(U'\x85'), -1);  // NEL
+    EXPECT_EQ(char_width(U'\x85'), -1); // NEL
     EXPECT_EQ(char_width(U'\x9F'), -1);
 }
 
@@ -63,27 +62,27 @@ TEST(CharWidth, SoftHyphen) {
 // ── char_width: zero-width characters ───────────────────────────────────
 
 TEST(CharWidth, CombiningDiacriticalMarks) {
-    EXPECT_EQ(char_width(U'\u0300'), 0);  // Combining grave accent
-    EXPECT_EQ(char_width(U'\u0301'), 0);  // Combining acute accent
-    EXPECT_EQ(char_width(U'\u036F'), 0);  // Last in combining diacriticals
+    EXPECT_EQ(char_width(U'\u0300'), 0); // Combining grave accent
+    EXPECT_EQ(char_width(U'\u0301'), 0); // Combining acute accent
+    EXPECT_EQ(char_width(U'\u036F'), 0); // Last in combining diacriticals
 }
 
 TEST(CharWidth, ZeroWidthSpace) {
-    EXPECT_EQ(char_width(U'\u200B'), 0);  // ZWSP
+    EXPECT_EQ(char_width(U'\u200B'), 0); // ZWSP
 }
 
 TEST(CharWidth, ZeroWidthJoiners) {
-    EXPECT_EQ(char_width(U'\u200C'), 0);  // ZWNJ
-    EXPECT_EQ(char_width(U'\u200D'), 0);  // ZWJ
+    EXPECT_EQ(char_width(U'\u200C'), 0); // ZWNJ
+    EXPECT_EQ(char_width(U'\u200D'), 0); // ZWJ
 }
 
 TEST(CharWidth, BidiMarks) {
-    EXPECT_EQ(char_width(U'\u200E'), 0);  // LRM
-    EXPECT_EQ(char_width(U'\u200F'), 0);  // RLM
-    EXPECT_EQ(char_width(U'\u202A'), 0);  // LRE
-    EXPECT_EQ(char_width(U'\u202E'), 0);  // RLO
-    EXPECT_EQ(char_width(U'\u2066'), 0);  // LRI
-    EXPECT_EQ(char_width(U'\u2069'), 0);  // PDI
+    EXPECT_EQ(char_width(U'\u200E'), 0); // LRM
+    EXPECT_EQ(char_width(U'\u200F'), 0); // RLM
+    EXPECT_EQ(char_width(U'\u202A'), 0); // LRE
+    EXPECT_EQ(char_width(U'\u202E'), 0); // RLO
+    EXPECT_EQ(char_width(U'\u2066'), 0); // LRI
+    EXPECT_EQ(char_width(U'\u2069'), 0); // PDI
 }
 
 TEST(CharWidth, VariationSelectors) {
@@ -108,28 +107,28 @@ TEST(CharWidth, HangulJamo) {
 }
 
 TEST(CharWidth, CJKUnifiedIdeographs) {
-    EXPECT_EQ(char_width(U'\u4E00'), 2);  // "one" in CJK
+    EXPECT_EQ(char_width(U'\u4E00'), 2); // "one" in CJK
     EXPECT_EQ(char_width(U'\u9FFF'), 2);
 }
 
 TEST(CharWidth, Hiragana) {
-    EXPECT_EQ(char_width(U'\u3042'), 2);  // Hiragana "a"
-    EXPECT_EQ(char_width(U'\u3093'), 2);  // Hiragana "n"
+    EXPECT_EQ(char_width(U'\u3042'), 2); // Hiragana "a"
+    EXPECT_EQ(char_width(U'\u3093'), 2); // Hiragana "n"
 }
 
 TEST(CharWidth, Katakana) {
-    EXPECT_EQ(char_width(U'\u30A2'), 2);  // Katakana "a"
+    EXPECT_EQ(char_width(U'\u30A2'), 2); // Katakana "a"
 }
 
 TEST(CharWidth, FullwidthForms) {
-    EXPECT_EQ(char_width(U'\uFF01'), 2);  // Fullwidth exclamation
-    EXPECT_EQ(char_width(U'\uFF5E'), 2);  // Fullwidth tilde
+    EXPECT_EQ(char_width(U'\uFF01'), 2); // Fullwidth exclamation
+    EXPECT_EQ(char_width(U'\uFF5E'), 2); // Fullwidth tilde
 }
 
 TEST(CharWidth, Emoji) {
-    EXPECT_EQ(char_width(U'\U0001F600'), 2);  // Grinning face
-    EXPECT_EQ(char_width(U'\U0001F4A9'), 2);  // Pile of poo
-    EXPECT_EQ(char_width(U'\U0001F680'), 2);  // Rocket
+    EXPECT_EQ(char_width(U'\U0001F600'), 2); // Grinning face
+    EXPECT_EQ(char_width(U'\U0001F4A9'), 2); // Pile of poo
+    EXPECT_EQ(char_width(U'\U0001F680'), 2); // Rocket
 }
 
 TEST(CharWidth, CJKExtensionB) {
@@ -140,13 +139,13 @@ TEST(CharWidth, CJKExtensionB) {
 // ── char_width: narrow Latin/Greek ──────────────────────────────────────
 
 TEST(CharWidth, LatinExtended) {
-    EXPECT_EQ(char_width(U'\u00C0'), 1);  // A with grave
-    EXPECT_EQ(char_width(U'\u00FF'), 1);  // y with diaeresis
+    EXPECT_EQ(char_width(U'\u00C0'), 1); // A with grave
+    EXPECT_EQ(char_width(U'\u00FF'), 1); // y with diaeresis
 }
 
 TEST(CharWidth, GreekLetters) {
-    EXPECT_EQ(char_width(U'\u03B1'), 1);  // alpha
-    EXPECT_EQ(char_width(U'\u03C9'), 1);  // omega
+    EXPECT_EQ(char_width(U'\u03B1'), 1); // alpha
+    EXPECT_EQ(char_width(U'\u03C9'), 1); // omega
 }
 
 // ── utf8_decode ─────────────────────────────────────────────────────────
@@ -282,7 +281,9 @@ TEST(StringWidth, CJKString) {
 
 TEST(StringWidth, MixedAsciiAndCJK) {
     // "A" (1) + U+4E00 (2) + "B" (1) = 4
-    EXPECT_EQ(string_width("A\xE4\xB8\x80" "B"), 4);
+    EXPECT_EQ(string_width("A\xE4\xB8\x80"
+                           "B"),
+              4);
 }
 
 TEST(StringWidth, CombiningCharacters) {
@@ -297,7 +298,9 @@ TEST(StringWidth, Emoji) {
 
 TEST(StringWidth, ZeroWidthSpaceInString) {
     // "a" + ZWSP + "b" = 2
-    EXPECT_EQ(string_width("a\xE2\x80\x8B" "b"), 2);
+    EXPECT_EQ(string_width("a\xE2\x80\x8B"
+                           "b"),
+              2);
 }
 
 TEST(StringWidth, ControlCharsSkipped) {
