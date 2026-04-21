@@ -9,14 +9,14 @@
 
 #ifdef __EMSCRIPTEN__
 
-#include "tapioca/raw_input.h"
-#include "tapioca/terminal.h"
+#    include "tapioca/raw_input.h"
+#    include "tapioca/terminal.h"
 
-#include <array>
-#include <cstring>
-#include <emscripten.h>
-#include <emscripten/html5.h>
-#include <mutex>
+#    include <array>
+#    include <cstring>
+#    include <emscripten.h>
+#    include <emscripten/html5.h>
+#    include <mutex>
 
 namespace tapioca {
 

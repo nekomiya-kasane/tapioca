@@ -10,7 +10,7 @@
 #include <string_view>
 
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
+#    include <emscripten.h>
 #endif
 
 namespace tapioca::pal {

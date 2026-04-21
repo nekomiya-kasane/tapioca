@@ -9,10 +9,10 @@
 
 #ifdef __EMSCRIPTEN__
 
-#include "tapioca/terminal.h"
+#    include "tapioca/terminal.h"
 
-#include <emscripten.h>
-#include <emscripten/html5.h>
+#    include <emscripten.h>
+#    include <emscripten/html5.h>
 
 namespace tapioca::terminal {
 

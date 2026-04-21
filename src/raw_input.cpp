@@ -10,14 +10,14 @@
 #include <cstring>
 
 #ifdef _WIN32
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
+#    ifndef WIN32_LEAN_AND_MEAN
+#        define WIN32_LEAN_AND_MEAN
+#    endif
+#    include <windows.h>
 #else
-#include <sys/select.h>
-#include <termios.h>
-#include <unistd.h>
+#    include <sys/select.h>
+#    include <termios.h>
+#    include <unistd.h>
 #endif
 
 namespace tapioca {
