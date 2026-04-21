@@ -32,8 +32,6 @@ CheckOptions:
     value:           lower_case
   - key:             readability-identifier-naming.ClassMemberCase
     value:           lower_case
-  - key:             readability-identifier-naming.ClassMemberPrefix
-    value:           "^_"
   - key:             readability-identifier-naming.ClassMethodCase
     value:           lower_case
   - key:             readability-identifier-naming.ParameterCase
@@ -50,17 +48,7 @@ CheckOptions:
     value:           lower_case
   - key:             readability-identifier-naming.TemplateParameterCase
     value:           CamelCase
-  - key:             readability-identifier-naming.TemplateParameterPrefix
-    value:           "^T"
   - key:             readability-identifier-naming.UnionCase
     value:           lower_case
-  - key:             readability-identifier-naming.GlobalVariablePrefix
-    value:           "^g_"
-  - key:             readability-identifier-naming.GlobalVariableIgnoredRegexp
-    value:           "^s_|^(cursor_|clear_|reset)"
-  - key:             readability-identifier-naming.StaticVariablePrefix
-    value:           "^s_"
-  - key:             readability-identifier-naming.StaticVariableIgnoredRegexp
-    value:           "^g_"
   - key:             readability-identifier-naming.NamespaceCase
     value:           lower_case
