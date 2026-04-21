@@ -74,7 +74,9 @@ oklch_triple rgb_to_oklch(uint8_t r8, uint8_t g8, uint8_t b8) {
     float b_ = 0.0259040371f * l + 0.7827717662f * m - 0.8086757660f * s;
     float C = std::sqrt(a_ * a_ + b_ * b_);
     float h = std::atan2(b_, a_) * (180.0f / 3.14159265358979f);
-    if (h < 0.0f) h += 360.0f;
+    if (h < 0.0f) {
+        h += 360.0f;
+    }
     return {L, C, h};
 }
 
@@ -83,8 +85,12 @@ float oklch_distance(oklch_triple a, oklch_triple b) {
     float dL = a.L - b.L;
     float dC = a.C - b.C;
     float dh = a.h - b.h;
-    if (dh > 180.0f) dh -= 360.0f;
-    if (dh < -180.0f) dh += 360.0f;
+    if (dh > 180.0f) {
+        dh -= 360.0f;
+    }
+    if (dh < -180.0f) {
+        dh += 360.0f;
+    }
     // Convert hue difference to chord distance in chroma plane
     float avg_C = (a.C + b.C) * 0.5f;
     float dH = 2.0f * avg_C * std::sin((dh * 3.14159265358979f / 180.0f) * 0.5f);
@@ -98,11 +104,21 @@ uint8_t rgb_to_256(uint8_t r, uint8_t g, uint8_t b) {
 
     // Check cube colors (16-231) — start with nearest-cube heuristic
     auto nearest_cube = [](uint8_t v) -> uint8_t {
-        if (v < 48) return 0;
-        if (v < 115) return 1;
-        if (v < 155) return 2;
-        if (v < 195) return 3;
-        if (v < 235) return 4;
+        if (v < 48) {
+            return 0;
+        }
+        if (v < 115) {
+            return 1;
+        }
+        if (v < 155) {
+            return 2;
+        }
+        if (v < 195) {
+            return 3;
+        }
+        if (v < 235) {
+            return 4;
+        }
         return 5;
     };
     uint8_t ci = nearest_cube(r);
@@ -114,13 +130,19 @@ uint8_t rgb_to_256(uint8_t r, uint8_t g, uint8_t b) {
     // Also check neighboring cube cells (+-1 on each axis) for better match
     for (int di = -1; di <= 1; ++di) {
         int ni = ci + di;
-        if (ni < 0 || ni > 5) continue;
+        if (ni < 0 || ni > 5) {
+            continue;
+        }
         for (int dj = -1; dj <= 1; ++dj) {
             int nj = cj + dj;
-            if (nj < 0 || nj > 5) continue;
+            if (nj < 0 || nj > 5) {
+                continue;
+            }
             for (int dk = -1; dk <= 1; ++dk) {
                 int nk = ck + dk;
-                if (nk < 0 || nk > 5) continue;
+                if (nk < 0 || nk > 5) {
+                    continue;
+                }
                 float d = oklch_distance(src, rgb_to_oklch(cube_values[ni], cube_values[nj], cube_values[nk]));
                 if (d < best_dist) {
                     best_dist = d;
@@ -160,7 +182,9 @@ uint8_t rgb_to_16(uint8_t r, uint8_t g, uint8_t b) {
 
 // Convert 256-color index to RGB
 rgb_triple idx256_to_rgb(uint8_t idx) {
-    if (idx < 16) return ansi_16[idx];
+    if (idx < 16) {
+        return ansi_16[idx];
+    }
     if (idx < 232) {
         uint8_t i = idx - 16;
         uint8_t ri = i / 36;
@@ -178,13 +202,19 @@ color color::downgrade(uint8_t target_depth) const noexcept {
     // target_depth maps to color_depth enum values:
     // 0 = none, 1 = basic_16, 2 = palette_256, 3 = true_color
 
-    if (is_default()) return *this;
+    if (is_default()) {
+        return *this;
+    }
 
     // No downgrade needed if target >= current
-    if (target_depth >= static_cast<uint8_t>(kind)) return *this;
+    if (target_depth >= static_cast<uint8_t>(kind)) {
+        return *this;
+    }
 
     // Target = none: strip all color
-    if (target_depth == 0) return default_color();
+    if (target_depth == 0) {
+        return default_color();
+    }
 
     // Current is RGB
     if (kind == color_kind::rgb) {
@@ -198,9 +228,13 @@ color color::downgrade(uint8_t target_depth) const noexcept {
 
     // Current is 256-color
     if (kind == color_kind::indexed_256) {
-        if (target_depth >= 2) return *this;
+        if (target_depth >= 2) {
+            return *this;
+        }
         // 256 -> 16
-        if (r < 16) return from_index_16(r); // already a basic color
+        if (r < 16) {
+            return from_index_16(r); // already a basic color
+        }
         auto [cr, cg, cb] = idx256_to_rgb(r);
         return from_index_16(rgb_to_16(cr, cg, cb));
     }

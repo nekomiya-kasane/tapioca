@@ -176,20 +176,32 @@ bool in_ranges(char32_t cp, const range *table, size_t count) noexcept {
 
 int char_width(char32_t cp) noexcept {
     // C0 control characters (except HT, LF which are handled by caller)
-    if (cp < 0x20 && cp != 0x09 && cp != 0x0A) return -1;
+    if (cp < 0x20 && cp != 0x09 && cp != 0x0A) {
+        return -1;
+    }
     // DEL
-    if (cp == 0x7F) return -1;
+    if (cp == 0x7F) {
+        return -1;
+    }
     // C1 control characters
-    if (cp >= 0x80 && cp < 0xA0) return -1;
+    if (cp >= 0x80 && cp < 0xA0) {
+        return -1;
+    }
 
     // Soft hyphen
-    if (cp == 0x00AD) return 1;
+    if (cp == 0x00AD) {
+        return 1;
+    }
 
     // Zero-width
-    if (in_ranges(cp, zero_width_ranges, std::size(zero_width_ranges))) return 0;
+    if (in_ranges(cp, zero_width_ranges, std::size(zero_width_ranges))) {
+        return 0;
+    }
 
     // Wide
-    if (in_ranges(cp, wide_ranges, std::size(wide_ranges))) return 2;
+    if (in_ranges(cp, wide_ranges, std::size(wide_ranges))) {
+        return 2;
+    }
 
     // Default: narrow
     return 1;
@@ -271,10 +283,14 @@ int string_width(std::string_view utf8) noexcept {
     while (remaining > 0) {
         char32_t cp;
         int bytes = utf8_decode(p, remaining, cp);
-        if (bytes == 0) break;
+        if (bytes == 0) {
+            break;
+        }
 
         int w = char_width(cp);
-        if (w > 0) total += w; // skip control chars (w == -1) and combining (w == 0)
+        if (w > 0) {
+            total += w; // skip control chars (w == -1) and combining (w == 0)
+        }
 
         p += bytes;
         remaining -= static_cast<size_t>(bytes);

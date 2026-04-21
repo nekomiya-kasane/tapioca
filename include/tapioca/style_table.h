@@ -36,7 +36,9 @@ class style_table {
     /** @brief Intern a style, returning its ID. Returns existing ID if already present. */
     [[nodiscard]] style_id intern(const style &s) {
         auto it = map_.find(s);
-        if (it != map_.end()) return it->second;
+        if (it != map_.end()) {
+            return it->second;
+        }
         auto id = static_cast<style_id>(styles_.size());
         assert(styles_.size() < 65535 && "style_table overflow");
         styles_.push_back(s);

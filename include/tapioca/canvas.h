@@ -53,7 +53,9 @@ class canvas {
     /** @brief Write a cell into the next buffer at (x, y). Skips fully transparent cells. */
     void set(uint32_t x, uint32_t y, const cell &c) {
         assert(x < width_ && y < height_);
-        if (c.alpha == 0) return; // fully transparent -- skip
+        if (c.alpha == 0) {
+            return; // fully transparent -- skip
+        }
         next_[index(x, y)] = c;
     }
 
@@ -65,7 +67,9 @@ class canvas {
      */
     void set_blended(uint32_t x, uint32_t y, const cell &c, style_table &styles) {
         assert(x < width_ && y < height_);
-        if (c.alpha == 0) return;
+        if (c.alpha == 0) {
+            return;
+        }
         if (c.alpha == 255) {
             next_[index(x, y)] = c;
             return;
@@ -77,7 +81,9 @@ class canvas {
         const auto &dst_sty = styles.lookup(dst.sid);
 
         auto blend_color = [](color src, color dst, uint8_t a) -> color {
-            if (src.kind != color_kind::rgb || dst.kind != color_kind::rgb) return src;
+            if (src.kind != color_kind::rgb || dst.kind != color_kind::rgb) {
+                return src;
+            }
             uint16_t inv = 255 - a;
             return color::from_rgb(static_cast<uint8_t>((src.r * a + dst.r * inv) / 255),
                                    static_cast<uint8_t>((src.g * a + dst.g * inv) / 255),

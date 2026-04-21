@@ -71,8 +71,12 @@ void basic_console::flush_to_sink(std::string_view buf) {
 // ── State queries ───────────────────────────────────────────────────────
 
 bool basic_console::color_enabled() const noexcept {
-    if (config_.no_color) return false;
-    if (config_.force_color) return true;
+    if (config_.no_color) {
+        return false;
+    }
+    if (config_.force_color) {
+        return true;
+    }
     return config_.depth != color_depth::none;
 }
 

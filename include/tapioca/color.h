@@ -43,8 +43,12 @@ struct linear_gradient {
  * Returns the interpolated RGB color. Non-RGB start/end colors are returned as-is (start).
  */
 inline color resolve_gradient(const linear_gradient &g, uint32_t x, uint32_t y, rect area) {
-    if (area.w == 0 && area.h == 0) return g.start;
-    if (g.start.kind != color_kind::rgb || g.end.kind != color_kind::rgb) return g.start;
+    if (area.w == 0 && area.h == 0) {
+        return g.start;
+    }
+    if (g.start.kind != color_kind::rgb || g.end.kind != color_kind::rgb) {
+        return g.start;
+    }
 
     float t = 0.0f;
     if (g.dir == gradient_direction::horizontal) {
@@ -57,8 +61,12 @@ inline color resolve_gradient(const linear_gradient &g, uint32_t x, uint32_t y, 
         t = static_cast<float>(local_y) / static_cast<float>(span);
     }
 
-    if (t < 0.0f) t = 0.0f;
-    if (t > 1.0f) t = 1.0f;
+    if (t < 0.0f) {
+        t = 0.0f;
+    }
+    if (t > 1.0f) {
+        t = 1.0f;
+    }
 
     return color::from_rgb(static_cast<uint8_t>(g.start.r + (g.end.r - g.start.r) * t),
                            static_cast<uint8_t>(g.start.g + (g.end.g - g.start.g) * t),
@@ -81,16 +89,19 @@ struct hsl {
     float mn = std::fmin(r, std::fmin(g, b));
     float d = mx - mn;
     float l = (mx + mn) * 0.5f;
-    if (d < 1e-6f) return {0.0f, 0.0f, l};
+    if (d < 1e-6f) {
+        return {0.0f, 0.0f, l};
+    }
 
     float s = (l > 0.5f) ? d / (2.0f - mx - mn) : d / (mx + mn);
     float h = 0.0f;
-    if (mx == r)
+    if (mx == r) {
         h = (g - b) / d + (g < b ? 6.0f : 0.0f);
-    else if (mx == g)
+    } else if (mx == g) {
         h = (b - r) / d + 2.0f;
-    else
+    } else {
         h = (r - g) / d + 4.0f;
+    }
     h /= 6.0f;
     return {h, s, l};
 }
@@ -98,11 +109,21 @@ struct hsl {
 /** @brief Convert HSL to sRGB color. */
 [[nodiscard]] inline color hsl_to_rgb(hsl c) noexcept {
     auto hue2rgb = [](float p, float q, float t) -> float {
-        if (t < 0.0f) t += 1.0f;
-        if (t > 1.0f) t -= 1.0f;
-        if (t < 1.0f / 6.0f) return p + (q - p) * 6.0f * t;
-        if (t < 1.0f / 2.0f) return q;
-        if (t < 2.0f / 3.0f) return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
+        if (t < 0.0f) {
+            t += 1.0f;
+        }
+        if (t > 1.0f) {
+            t -= 1.0f;
+        }
+        if (t < 1.0f / 6.0f) {
+            return p + (q - p) * 6.0f * t;
+        }
+        if (t < 1.0f / 2.0f) {
+            return q;
+        }
+        if (t < 2.0f / 3.0f) {
+            return p + (q - p) * (2.0f / 3.0f - t) * 6.0f;
+        }
         return p;
     };
     if (c.s < 1e-6f) {
@@ -134,8 +155,12 @@ namespace detail {
 
 /** @brief Gamma-encode a single linear-light channel to sRGB. */
 [[nodiscard]] inline float linear_to_srgb(float c) noexcept {
-    if (c <= 0.0f) return 0.0f;
-    if (c >= 1.0f) return 1.0f;
+    if (c <= 0.0f) {
+        return 0.0f;
+    }
+    if (c >= 1.0f) {
+        return 1.0f;
+    }
     return (c <= 0.0031308f) ? c * 12.92f : 1.055f * std::pow(c, 1.0f / 2.4f) - 0.055f;
 }
 
@@ -165,7 +190,9 @@ namespace detail {
     // OKLab -> OKLCH
     float C = std::sqrt(a_ * a_ + b_ * b_);
     float h = std::atan2(b_, a_) * (180.0f / 3.14159265358979f);
-    if (h < 0.0f) h += 360.0f;
+    if (h < 0.0f) {
+        h += 360.0f;
+    }
 
     return {L, C, h};
 }
@@ -205,7 +232,9 @@ namespace detail {
  * Only meaningful for RGB colors; returns 0 for non-RGB.
  */
 [[nodiscard]] inline float relative_luminance(color c) noexcept {
-    if (c.kind != color_kind::rgb) return 0.0f;
+    if (c.kind != color_kind::rgb) {
+        return 0.0f;
+    }
     float r = detail::srgb_to_linear(c.r / 255.0f);
     float g = detail::srgb_to_linear(c.g / 255.0f);
     float b = detail::srgb_to_linear(c.b / 255.0f);
@@ -240,9 +269,15 @@ namespace detail {
  * @return Blended color in sRGB. Returns `a` if either input is non-RGB.
  */
 [[nodiscard]] inline color blend_oklch(color a, color b, float t) noexcept {
-    if (a.kind != color_kind::rgb || b.kind != color_kind::rgb) return a;
-    if (t <= 0.0f) return a;
-    if (t >= 1.0f) return b;
+    if (a.kind != color_kind::rgb || b.kind != color_kind::rgb) {
+        return a;
+    }
+    if (t <= 0.0f) {
+        return a;
+    }
+    if (t >= 1.0f) {
+        return b;
+    }
 
     oklch ca = rgb_to_oklch(a.r, a.g, a.b);
     oklch cb = rgb_to_oklch(b.r, b.g, b.b);
@@ -253,11 +288,19 @@ namespace detail {
 
     // Interpolate hue via shortest arc
     float dh = cb.h - ca.h;
-    if (dh > 180.0f) dh -= 360.0f;
-    if (dh < -180.0f) dh += 360.0f;
+    if (dh > 180.0f) {
+        dh -= 360.0f;
+    }
+    if (dh < -180.0f) {
+        dh += 360.0f;
+    }
     float h = ca.h + dh * t;
-    if (h < 0.0f) h += 360.0f;
-    if (h >= 360.0f) h -= 360.0f;
+    if (h < 0.0f) {
+        h += 360.0f;
+    }
+    if (h >= 360.0f) {
+        h -= 360.0f;
+    }
 
     return oklch_to_rgb({L, C, h});
 }

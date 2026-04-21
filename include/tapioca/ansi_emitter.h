@@ -49,7 +49,9 @@ inline std::string cursor_to(uint32_t row, uint32_t col) {
 
 /** @brief Move cursor up by n rows. */
 inline std::string cursor_up(uint32_t n = 1) {
-    if (n == 0) return {};
+    if (n == 0) {
+        return {};
+    }
     std::string s;
     s.reserve(12);
     s += "\033[";
@@ -60,7 +62,9 @@ inline std::string cursor_up(uint32_t n = 1) {
 
 /** @brief Move cursor down by n rows. */
 inline std::string cursor_down(uint32_t n = 1) {
-    if (n == 0) return {};
+    if (n == 0) {
+        return {};
+    }
     std::string s;
     s.reserve(12);
     s += "\033[";
@@ -71,7 +75,9 @@ inline std::string cursor_down(uint32_t n = 1) {
 
 /** @brief Move cursor right by n columns. */
 inline std::string cursor_right(uint32_t n = 1) {
-    if (n == 0) return {};
+    if (n == 0) {
+        return {};
+    }
     std::string s;
     s.reserve(12);
     s += "\033[";
@@ -82,7 +88,9 @@ inline std::string cursor_right(uint32_t n = 1) {
 
 /** @brief Move cursor left by n columns. */
 inline std::string cursor_left(uint32_t n = 1) {
-    if (n == 0) return {};
+    if (n == 0) {
+        return {};
+    }
     std::string s;
     s.reserve(12);
     s += "\033[";
@@ -104,10 +112,11 @@ inline void append_fg_params(std::string &out, const color &c) {
         out += "39";
         break;
     case color_kind::indexed_16:
-        if (c.r < 8)
+        if (c.r < 8) {
             detail::append_uint(out, 30 + c.r);
-        else
+        } else {
             detail::append_uint(out, 90 + (c.r - 8));
+        }
         break;
     case color_kind::indexed_256:
         out += "38;5;";
@@ -130,10 +139,11 @@ inline void append_bg_params(std::string &out, const color &c) {
         out += "49";
         break;
     case color_kind::indexed_16:
-        if (c.r < 8)
+        if (c.r < 8) {
             detail::append_uint(out, 40 + c.r);
-        else
+        } else {
             detail::append_uint(out, 100 + (c.r - 8));
+        }
         break;
     case color_kind::indexed_256:
         out += "48;5;";
@@ -152,26 +162,54 @@ inline void append_bg_params(std::string &out, const color &c) {
 
 inline void append_attr_params(std::string &out, attr a, bool sep) {
     auto emit = [&](const char *code) {
-        if (sep) out += ';';
+        if (sep) {
+            out += ';';
+        }
         out += code;
         sep = true;
     };
-    if (has_attr(a, attr::bold)) emit("1");
-    if (has_attr(a, attr::dim)) emit("2");
-    if (has_attr(a, attr::italic)) emit("3");
-    if (has_attr(a, attr::underline)) emit("4");
-    if (has_attr(a, attr::blink)) emit("5");
-    if (has_attr(a, attr::reverse)) emit("7");
-    if (has_attr(a, attr::hidden)) emit("8");
-    if (has_attr(a, attr::strike)) emit("9");
-    if (has_attr(a, attr::double_underline)) emit("21");
-    if (has_attr(a, attr::overline)) emit("53");
-    if (has_attr(a, attr::superscript)) emit("73");
-    if (has_attr(a, attr::subscript)) emit("74");
+    if (has_attr(a, attr::bold)) {
+        emit("1");
+    }
+    if (has_attr(a, attr::dim)) {
+        emit("2");
+    }
+    if (has_attr(a, attr::italic)) {
+        emit("3");
+    }
+    if (has_attr(a, attr::underline)) {
+        emit("4");
+    }
+    if (has_attr(a, attr::blink)) {
+        emit("5");
+    }
+    if (has_attr(a, attr::reverse)) {
+        emit("7");
+    }
+    if (has_attr(a, attr::hidden)) {
+        emit("8");
+    }
+    if (has_attr(a, attr::strike)) {
+        emit("9");
+    }
+    if (has_attr(a, attr::double_underline)) {
+        emit("21");
+    }
+    if (has_attr(a, attr::overline)) {
+        emit("53");
+    }
+    if (has_attr(a, attr::superscript)) {
+        emit("73");
+    }
+    if (has_attr(a, attr::subscript)) {
+        emit("74");
+    }
 }
 
 inline std::string sgr(const style &s) {
-    if (s.is_default()) return {};
+    if (s.is_default()) {
+        return {};
+    }
     std::string out;
     out.reserve(32);
     out += "\033[";
@@ -181,12 +219,16 @@ inline std::string sgr(const style &s) {
         need_sep = true;
     }
     if (!s.fg.is_default()) {
-        if (need_sep) out += ';';
+        if (need_sep) {
+            out += ';';
+        }
         append_fg_params(out, s.fg);
         need_sep = true;
     }
     if (!s.bg.is_default()) {
-        if (need_sep) out += ';';
+        if (need_sep) {
+            out += ';';
+        }
         append_bg_params(out, s.bg);
     }
     out += 'm';
@@ -235,7 +277,9 @@ inline std::string query_palette_color(uint8_t index) {
 }
 
 inline std::string reset_palette_color(int index = -1) {
-    if (index < 0) return "\033]104\033\\";
+    if (index < 0) {
+        return "\033]104\033\\";
+    }
     char buf[16];
     int n = std::snprintf(buf, sizeof(buf), "\033]104;%d\033\\", index);
     return std::string(buf, static_cast<size_t>(n));
@@ -387,10 +431,14 @@ class ansi_emitter {
      * If VT sequences are disabled (legacy conhost), produces no output.
      */
     void transition(const style &target, std::string &out) {
-        if (!caps_.vt_sequences) return;
+        if (!caps_.vt_sequences) {
+            return;
+        }
 
         style effective = downgrade_style(target);
-        if (hw_ == effective) return;
+        if (hw_ == effective) {
+            return;
+        }
 
         std::string delta;
         build_delta(effective, delta);
@@ -399,10 +447,11 @@ class ansi_emitter {
         reset_path += "\033[0m";
         reset_path += ansi::sgr(effective);
 
-        if (delta.size() <= reset_path.size())
+        if (delta.size() <= reset_path.size()) {
             out += delta;
-        else
+        } else {
             out += reset_path;
+        }
 
         hw_ = effective;
     }
@@ -411,7 +460,9 @@ class ansi_emitter {
      * @brief Emit a full reset and clear hardware state.
      */
     void reset(std::string &out) {
-        if (!caps_.vt_sequences) return;
+        if (!caps_.vt_sequences) {
+            return;
+        }
         if (!hw_.is_default()) {
             out += "\033[0m";
             hw_ = style{};
@@ -445,7 +496,9 @@ class ansi_emitter {
         auto added = target.attrs & ~hw_.attrs;
         auto emit_off = [&](attr flag, const char *code) {
             if (has_attr(removed, flag)) {
-                if (need_sep) out += ';';
+                if (need_sep) {
+                    out += ';';
+                }
                 out += code;
                 need_sep = true;
             }
@@ -463,14 +516,20 @@ class ansi_emitter {
         emit_off(attr::superscript, "75");
         emit_off(attr::subscript, "75");
         ansi::append_attr_params(out, added, need_sep);
-        if (added != attr::none) need_sep = true;
+        if (added != attr::none) {
+            need_sep = true;
+        }
         if (hw_.fg != target.fg) {
-            if (need_sep) out += ';';
+            if (need_sep) {
+                out += ';';
+            }
             ansi::append_fg_params(out, target.fg);
             need_sep = true;
         }
         if (hw_.bg != target.bg) {
-            if (need_sep) out += ';';
+            if (need_sep) {
+                out += ';';
+            }
             ansi::append_bg_params(out, target.bg);
         }
         out += 'm';
