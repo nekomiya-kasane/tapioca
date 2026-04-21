@@ -57,7 +57,7 @@ CheckOptions:
   - key:             readability-identifier-naming.GlobalVariablePrefix
     value:           "^g_"
   - key:             readability-identifier-naming.GlobalVariableIgnoredRegexp
-    value:           "^s_"
+    value:           "^s_|^(cursor_|clear_|reset)"
   - key:             readability-identifier-naming.StaticVariablePrefix
     value:           "^s_"
   - key:             readability-identifier-naming.StaticVariableIgnoredRegexp
